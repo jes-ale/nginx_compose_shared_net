@@ -31,3 +31,5 @@ volumes:
 
 networks:
   nginx_net:      # Red compartida para todos los proyectos
+  name: nginx_net  # Fuerza este nombre exacto
+

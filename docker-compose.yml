@@ -20,8 +20,6 @@ services:
     networks:
       - nginx_net
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-    depends_on:
-      - nginx
     restart: unless-stopped
 
 volumes:

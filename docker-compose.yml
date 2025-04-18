@@ -5,7 +5,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - shared_confs:/etc/nginx/conf.d  # Configs centralizadas
+      - shared_confs:/etc/nginx/conf.d
       - certbot_www:/var/www/certbot
       - certbot_conf:/etc/letsencrypt
     networks:
@@ -25,12 +25,12 @@ services:
     restart: unless-stopped
 
 volumes:
-  shared_confs:    # Volumen para todas las configs
-    name: shared_confs # Fuerza este nombre exacto
+  shared_confs:
+    name: shared_confs  # Nombre fijo para compartir
   certbot_www:
   certbot_conf:
 
 networks:
-  nginx_net:      # Red compartida para todos los proyectos
-    name: nginx_net  # Fuerza este nombre exacto
-
+  nginx_net:
+    name: nginx_net  # Nombre fijo para la red
+    driver: bridge   # Importante definirlo aquí primero

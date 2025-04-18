@@ -26,6 +26,7 @@ services:
 
 volumes:
   shared_confs:    # Volumen para todas las configs
+    name: shared_confs # Fuerza este nombre exacto
   certbot_www:
   certbot_conf:
 

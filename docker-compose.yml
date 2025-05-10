@@ -5,11 +5,10 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - ./shared_confs:/etc/nginx/conf.d
-      - ./nginx/secure/:/etc/nginx/templates/
-      - /etc/localtime:/etc/localtime:ro
-      - ./nginx/certbot/conf:/etc/letsencrypt
-      - ./nginx/certbot/www:/var/www/certbot
+      - ./certbot/www/:/var/www/certbot/:ro
+      - ./certbot/conf:/etc/letsencrypt:ro
+      - ./nginx/conf/:/etc/nginx/conf.d/:ro
+      - ./nginx/templates/:/etc/nginx/templates/
       - ./nginx/99-autoreload.sh:/docker-entrypoint.d/99-autoreload.sh  # Script to autoreload Nginx when certs are renewed
     networks:
       - nginx_net
@@ -17,21 +16,21 @@ services:
     env_file: .env
 
   certbot:
-    image: certbot/certbot
+    image: certbot/certbot 
+    volumes:
+      - ./certbot/www/:/var/www/certbot/:rw
+      - ./certbot/conf/:/etc/letsencrypt/:rw
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"  # Renew certificates every 12 hours
     networks:
       - nginx_net
-    volumes:
-      - ./nginx/certbot/conf:/etc/letsencrypt
-      - ./nginx/certbot/www:/var/www/certbot
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"  # Renew certificates every 12 hours
     restart: unless-stopped
 
 volumes:
   shared_confs:
-    name: shared_confs  # Nombre fijo para compartir
+    name: shared_confs
 
 networks:
   nginx_net:
-    name: nginx_net  # Nombre fijo para la red
+    name: nginx_net
     driver: bridge
 
